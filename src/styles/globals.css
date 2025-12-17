@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+ body { 
+   background: linear-gradient(180deg,#fbfaf9 0%, #f8fafc 100%);
+   color: #1e293b;
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+ }
+
+:root{
+  --accent-600: #f59e0b; /* amber-500/600 */
+  --accent-700: #d97706;
+  --muted: #64748b;
+}
+
+@layer base {
+  html,body,#__next{ height:100%; }
+  h1,h2,h3,h4{ color: #0f172a; }
+}
+
+@layer components {
+  .btn{
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-shadow focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  .btn-primary{
+    background-image: linear-gradient(90deg,var(--accent-600),var(--accent-700));
+    color: white;
+    @apply px-4 py-2 shadow-md hover:shadow-xl hover:-translate-y-0.5 transform;
+  }
+  .btn-ghost{
+    @apply px-3 py-2 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50;
+  }
+  .card{
+    @apply bg-white rounded-lg overflow-hidden border border-transparent hover:border-slate-100 shadow-sm hover:shadow-lg transition;
+  }
+  .input {
+    @apply w-full border border-slate-200 rounded-md p-2 focus:ring-2 focus:ring-amber-200;
+  }
+}
+
+@layer components {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
