@@ -17,97 +17,318 @@ USE recipes_db;
 -- WHY: Enhanced to track authenticity, cultural metadata, SEO, and status
 -- FEATURES: Verification workflows, regional variations, soft deletion, versioning
 
-ALTER TABLE recipes ADD COLUMN IF NOT EXISTS (
-  -- Authenticity & Trust System
-  authenticity_status ENUM('verified', 'community', 'ai_generated', 'pending_review') 
-    DEFAULT 'community' 
-    COMMENT 'Tracks source credibility: verified by experts, community-submitted, AI-generated, or pending',
-  
-  -- SEO & Discoverability
-  slug VARCHAR(255) UNIQUE 
-    COMMENT 'URL-friendly identifier for SEO (e.g., "classic-pasta-carbonara")',
-  short_description VARCHAR(500) 
-    COMMENT 'Brief recipe summary for search results and meta tags (max 160 chars)',
-  
-  -- Cultural & Regional Metadata
-  country_code CHAR(2) 
-    COMMENT 'ISO 3166-1 alpha-2 country code (e.g., "IT" for Italy)',
-  country_name VARCHAR(100) 
-    COMMENT 'Full country name for UX and SEO',
-  region VARCHAR(100) 
-    COMMENT 'Region/state/province (e.g., "Lazio" for Rome)',
-  cuisine_type VARCHAR(100) 
-    COMMENT 'Cuisine classification (e.g., "Italian", "Mediterranean")',
-  
-  -- Occasion & Seasonality
-  festival_occasion VARCHAR(255) 
-    COMMENT 'Associated festival/holiday (e.g., "Christmas", "Eid", "Hanukkah")',
-  season ENUM('spring', 'summer', 'autumn', 'winter', 'year_round') 
-    DEFAULT 'year_round' 
-    COMMENT 'Best season to cook this recipe',
-  
-  -- Refined Difficulty & Time Metrics
-  spice_level TINYINT(1) CHECK (spice_level >= 0 AND spice_level <= 5) 
-    DEFAULT 0 
-    COMMENT 'Spice heat level (0=none, 5=very hot)',
-  prep_time_minutes INT 
-    COMMENT 'Preparation time in minutes (before cooking)',
-  cook_time_minutes INT 
-    COMMENT 'Active cooking time in minutes',
-  total_time_minutes INT GENERATED ALWAYS AS (COALESCE(prep_time_minutes, 0) + COALESCE(cook_time_minutes, 0)) STORED 
-    COMMENT 'Automatically calculated total time',
-  servings INT DEFAULT 1 
-    COMMENT 'Number of servings this recipe makes',
-  
-  -- Content Management & Moderation
-  status ENUM('published', 'draft', 'archived', 'flagged_review') 
-    DEFAULT 'published' 
-    COMMENT 'Publication status for editorial workflow',
-  is_deleted BOOLEAN DEFAULT FALSE 
-    COMMENT 'Soft delete flag (keeps historical data)',
-  deleted_at TIMESTAMP NULL 
-    COMMENT 'Timestamp of soft deletion for audit trail',
-  
-  -- Versioning & Change Tracking
-  version_number INT DEFAULT 1 
-    COMMENT 'Recipe version for tracking changes/updates',
-  parent_recipe_id INT 
-    COMMENT 'FK to original recipe if this is a regional variation',
-  
-  -- Analytics & Quality Metrics
-  view_count INT DEFAULT 0 
-    COMMENT 'Track popularity and engagement',
-  community_rating DECIMAL(3, 2) CHECK (community_rating >= 0 AND community_rating <= 5) 
-    COMMENT 'Average rating from community (0-5 stars)',
-  total_reviews INT DEFAULT 0 
-    COMMENT 'Number of reviews received',
-  authenticity_score DECIMAL(3, 2) CHECK (authenticity_score >= 0 AND authenticity_score <= 1) 
-    DEFAULT 0.5 
-    COMMENT 'ML-calculated authenticity confidence (0-1)',
-  
-  -- Admin Fields
-  created_by_user_id INT 
-    COMMENT 'FK to users table - who submitted this recipe',
-  verified_by_user_id INT 
-    COMMENT 'FK to users table - who verified/approved this recipe',
-  verified_at TIMESTAMP NULL 
-    COMMENT 'When this recipe was verified as authentic',
-  
-  -- Enhanced Timestamps
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  published_at TIMESTAMP NULL 
-    COMMENT 'When recipe was first published'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Add/Update Indexes for Performance (conditionally, to avoid errors if they already exist)
+-- Index creation skipped if they already exist; manual creation recommended after first run
 
--- Add/Update Indexes for Performance
-CREATE INDEX IF NOT EXISTS idx_authenticity_status ON recipes(authenticity_status);
-CREATE INDEX IF NOT EXISTS idx_country_cuisine ON recipes(country_code, cuisine_type);
-CREATE INDEX IF NOT EXISTS idx_status_published ON recipes(status, published_at DESC);
-CREATE INDEX IF NOT EXISTS idx_slug ON recipes(slug);
-CREATE INDEX IF NOT EXISTS idx_soft_delete ON recipes(is_deleted, status);
-CREATE INDEX IF NOT EXISTS idx_parent_recipe ON recipes(parent_recipe_id);
-CREATE INDEX IF NOT EXISTS idx_created_by ON recipes(created_by_user_id);
-CREATE FULLTEXT INDEX IF NOT EXISTS ft_recipe_search ON recipes(title, short_description, history);
+-- Uncomment the following if indexes do not exist and you want to create them:
+-- CREATE INDEX idx_authenticity_status ON recipes(authenticity_status);
+-- CREATE INDEX idx_country_cuisine ON recipes(country_code, cuisine_type);
+-- CREATE INDEX idx_status_published ON recipes(status, published_at DESC);
+-- CREATE INDEX idx_slug ON recipes(slug);
+-- CREATE INDEX idx_soft_delete ON recipes(is_deleted, status);
+-- CREATE INDEX idx_parent_recipe ON recipes(parent_recipe_id);
+-- CREATE INDEX idx_created_by ON recipes(created_by_user_id);
+-- CREATE FULLTEXT INDEX ft_recipe_search ON recipes(title, short_description, history);
+-- ============================================================================
+-- Some MySQL installs do not support `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`.
+-- The following prepared-statement checks are idempotent and safe to run: they
+-- add each column only when it does not already exist. Run this block if your
+-- MySQL version is older than 8.0.16 or if you prefer defensive migrations.
+
+SET @table = 'recipes';
+
+-- authenticity_status
+SET @col = 'authenticity_status';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' ENUM(''verified'',''community'',''ai_generated'',''pending_review'')',
+    ' DEFAULT ''community''',
+    ' COMMENT ''Tracks source credibility: verified by experts, community-submitted, AI-generated, or pending'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- slug
+SET @col = 'slug';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(255) UNIQUE',
+    ' COMMENT ''URL-friendly identifier for SEO (e.g., "classic-pasta-carbonara")'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- short_description
+SET @col = 'short_description';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(500)',
+    ' COMMENT ''Brief recipe summary for search results and meta tags (max 160 chars)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- country_code
+SET @col = 'country_code';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' CHAR(2)',
+    ' COMMENT ''ISO 3166-1 alpha-2 country code (e.g., "IT" for Italy)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- country_name
+SET @col = 'country_name';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(100)',
+    ' COMMENT ''Full country name for UX and SEO'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- region
+SET @col = 'region';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(100)',
+    ' COMMENT ''Region/state/province (e.g., "Lazio" for Rome)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- cuisine_type
+SET @col = 'cuisine_type';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(100)',
+    ' COMMENT ''Cuisine classification (e.g., "Italian", "Mediterranean")'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- festival_occasion
+SET @col = 'festival_occasion';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' VARCHAR(255)',
+    ' COMMENT ''Associated festival/holiday (e.g., "Christmas", "Eid", "Hanukkah")'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- season
+SET @col = 'season';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' ENUM(''spring'',''summer'',''autumn'',''winter'',''year_round'') DEFAULT ''year_round''',
+    ' COMMENT ''Best season to cook this recipe'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- spice_level
+SET @col = 'spice_level';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' TINYINT(1) DEFAULT 0',
+    ' COMMENT ''Spice heat level (0=none, 5=very hot)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- prep_time_minutes
+SET @col = 'prep_time_minutes';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT',
+    ' COMMENT ''Preparation time in minutes (before cooking)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- cook_time_minutes
+SET @col = 'cook_time_minutes';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT',
+    ' COMMENT ''Active cooking time in minutes'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- total_time_minutes (generated)
+SET @col = 'total_time_minutes';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' INT GENERATED ALWAYS AS (COALESCE(prep_time_minutes, 0) + COALESCE(cook_time_minutes, 0)) STORED',
+    ' COMMENT ''Automatically calculated total time'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- servings
+SET @col = 'servings';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT DEFAULT 1',
+    ' COMMENT ''Number of servings this recipe makes'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- status
+SET @col = 'status';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' ENUM(''published'',''draft'',''archived'',''flagged_review'') DEFAULT ''published''',
+    ' COMMENT ''Publication status for editorial workflow'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- is_deleted
+SET @col = 'is_deleted';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' BOOLEAN DEFAULT FALSE',
+    ' COMMENT ''Soft delete flag (keeps historical data)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- deleted_at
+SET @col = 'deleted_at';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' TIMESTAMP NULL',
+    ' COMMENT ''Timestamp of soft deletion for audit trail'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- version_number
+SET @col = 'version_number';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT DEFAULT 1',
+    ' COMMENT ''Recipe version for tracking changes/updates'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- parent_recipe_id
+SET @col = 'parent_recipe_id';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT',
+    ' COMMENT ''FK to original recipe if this is a regional variation'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- view_count
+SET @col = 'view_count';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT DEFAULT 0',
+    ' COMMENT ''Track popularity and engagement'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- community_rating
+SET @col = 'community_rating';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' DECIMAL(3,2)',
+    ' COMMENT ''Average rating from community (0-5 stars)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- total_reviews
+SET @col = 'total_reviews';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT DEFAULT 0',
+    ' COMMENT ''Number of reviews received'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- authenticity_score
+SET @col = 'authenticity_score';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' DECIMAL(3,2) DEFAULT 0.5',
+    ' COMMENT ''ML-calculated authenticity confidence (0-1)'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- created_by_user_id
+SET @col = 'created_by_user_id';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT',
+    ' COMMENT ''FK to users table - who submitted this recipe'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- verified_by_user_id
+SET @col = 'verified_by_user_id';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' INT',
+    ' COMMENT ''FK to users table - who verified/approved this recipe'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- verified_at
+SET @col = 'verified_at';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' TIMESTAMP NULL',
+    ' COMMENT ''When this recipe was verified as authentic'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- updated_at
+SET @col = 'updated_at';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col,
+    ' TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- published_at
+SET @col = 'published_at';
+SELECT COUNT(*) INTO @cnt FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @table AND COLUMN_NAME = @col;
+SET @s = IF(@cnt = 0,
+  CONCAT('ALTER TABLE ', @table, ' ADD COLUMN ', @col, ' TIMESTAMP NULL',
+    ' COMMENT ''When recipe was first published'';'
+  ), 'SELECT ''column exists'';');
+PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- ============================================================================
 -- 2. USERS TABLE (Community Trust & Contributions)
@@ -676,8 +897,10 @@ CREATE TABLE IF NOT EXISTS geographic_coordinates (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   
-  INDEX idx_country_code (country_code),
-  SPATIAL INDEX sp_coordinates (POINT(latitude, longitude))
+  INDEX idx_country_code (country_code)
+  -- NOTE: Spatial indexes require a spatial column (POINT). To enable spatial indexing,
+  -- add a `location POINT` column and then create `SPATIAL INDEX sp_coordinates (location)`.
+  -- For now we omit creating a spatial index on decimal latitude/longitude columns.
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
