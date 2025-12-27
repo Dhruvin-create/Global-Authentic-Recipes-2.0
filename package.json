@@ -7,7 +7,9 @@
         "build": "next build",
         "start": "next start",
         "backend": "node backend/server.js",
-        "dev:full": "concurrently \"npm run dev\" \"npm run backend\""
+        "dev:full": "concurrently \"npm run dev\" \"npm run backend\"",
+        "migrate:search": "node run-search-migration.js",
+        "setup:search": "npm run migrate:search"
     },
     "dependencies": {
         "@radix-ui/react-slot": "latest",
