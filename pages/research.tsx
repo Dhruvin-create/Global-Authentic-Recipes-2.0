@@ -101,7 +101,7 @@ export default function ResearchPage() {
   };
 
   return (
-    <Layout>
+    <Layout className="px-0">
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
         {/* Header */}
         <div className="bg-white border-b border-slate-200">

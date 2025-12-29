@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Footer from './footer.tsx';
-import SmartSearchBar from './smart-search-bar.tsx';
 
 function EnhancedNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,6 +21,7 @@ function EnhancedNavbar() {
 
   const navItems = [
     { label: 'Recipes', href: '/recipes', icon: '📖' },
+    { label: 'Research', href: '/research', icon: '🔍' },
     { label: 'Map View', href: '/map', icon: '🗺️' },
     { label: 'Add Recipe', href: '/add-recipe', icon: '➕', primary: true },
   ];
@@ -33,27 +33,22 @@ function EnhancedNavbar() {
         : 'bg-white/80 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg"
+              className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg"
             >
-              <span className="text-white font-bold text-lg">🍳</span>
+              <span className="text-white font-bold text-sm">🍳</span>
             </motion.div>
             <div className="hidden sm:block">
-              <span className="text-2xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent">
                 Global Recipes
               </span>
               <p className="text-xs text-slate-500 -mt-1">Authentic • Cultural • Delicious</p>
             </div>
           </Link>
-
-          {/* Smart Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-            <SmartSearchBar />
-          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2">
@@ -61,7 +56,7 @@ function EnhancedNavbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 text-sm ${
                   item.primary
                     ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
                     : router.pathname === item.href
@@ -95,11 +90,6 @@ function EnhancedNavbar() {
               />
             </div>
           </button>
-        </div>
-
-        {/* Mobile Search Bar */}
-        <div className="md:hidden pb-4">
-          <SmartSearchBar />
         </div>
 
         {/* Mobile Menu */}
@@ -154,11 +144,9 @@ export default function Layout({ children, className = "" }) {
         <motion.div 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
-          className="flex-grow pt-20 md:pt-24"
+          className="flex-grow pt-16"
         >
-          <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ${className}`}>
-            <main>{children}</main>
-          </div>
+          <main className={className}>{children}</main>
         </motion.div>
         
         <Footer />

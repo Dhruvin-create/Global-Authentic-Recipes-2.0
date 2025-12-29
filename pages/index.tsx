@@ -57,7 +57,7 @@ export default function Home() {
   };
 
   return (
-    <Layout>
+    <Layout className="px-0">
       <Head>
         <title>Global Authentic Recipes - Discover Recipes From Around the World</title>
         <meta name="description" content="Discover authentic recipes and their origins from around the world. Learn cooking techniques, explore Cook Mode, and find recipes on our interactive map." />
@@ -72,7 +72,7 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-white to-rose-50 px-6 py-16 md:px-12 md:py-24 mb-24 -mx-4 md:-mx-6"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-white to-rose-50 px-6 py-16 md:px-12 md:py-24 mb-24 mx-4 md:mx-6"
       >
         {/* Background Elements */}
         <div className="absolute inset-0 opacity-40">
@@ -104,7 +104,7 @@ export default function Home() {
               Welcome to a global kitchen where every dish tells a story. Explore authentic recipes, master cooking techniques with Cook Mode, and discover dishes on our interactive map.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Link href="/recipes" className="btn btn-primary btn-lg group">
                 <span>Browse Recipes</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,8 +117,8 @@ export default function Home() {
             </div>
 
             {/* Smart Search Integration */}
-            <div className="max-w-md">
-              <SmartSearchBar placeholder="Search recipes, cuisines, or ingredients..." />
+            <div className="w-full max-w-xl">
+              <SmartSearchBar />
             </div>
           </motion.div>
 
@@ -146,171 +146,173 @@ export default function Home() {
       </motion.section>
 
       {/* Stats Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-24"
-      >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <StatCard number={stats.recipes} label="Recipes" icon="🍽️" />
-          <StatCard number={stats.countries} label="Countries" icon="🌍" />
-          <StatCard number={stats.verified} label="Verified" icon="✅" />
-          <StatCard number={`${stats.cookTime}m`} label="Avg Cook Time" icon="⏱️" />
-        </div>
-      </motion.section>
-
-      {/* Enhanced Features Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-24"
-      >
-        <div className="text-center mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-slate-900 mb-6"
-          >
-            Powerful Features for <span className="text-gradient-primary">Home Chefs</span>
-          </motion.h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Everything you need to become a world-class home chef with cutting-edge cooking tools
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <FeatureCard
-            icon="🍳"
-            title="Cook Mode"
-            description="Distraction-free cooking experience with step-by-step guidance, timers, and voice commands."
-            href="/recipes"
-            gradient="from-amber-500 to-orange-600"
-          />
-          <FeatureCard
-            icon="🗺️"
-            title="Recipe Map"
-            description="Explore authentic recipes by geographic origin and discover dishes from around the world."
-            href="/map"
-            gradient="from-blue-500 to-purple-600"
-          />
-          <FeatureCard
-            icon="🔍"
-            title="Smart Search"
-            description="AI-powered search with auto-suggestions, ingredient matching, and authenticity filtering."
-            href="/recipes"
-            gradient="from-green-500 to-teal-600"
-          />
-        </div>
-      </motion.section>
-
-      {/* Map Preview Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-24"
-      >
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-            Explore Recipes by <span className="text-gradient-secondary">Location</span>
-          </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Discover authentic dishes from their countries of origin
-          </p>
-        </div>
-        
-        <MapPreviewCard recipes={recipes.slice(0, 12)} />
-      </motion.section>
-
-      {/* Featured Recipes Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-24"
-      >
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Featured Recipes</h2>
-            <p className="text-lg text-slate-600">Recently added authentic dishes from our community</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-24"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <StatCard number={stats.recipes} label="Recipes" icon="🍽️" />
+            <StatCard number={stats.countries} label="Countries" icon="🌍" />
+            <StatCard number={stats.verified} label="Verified" icon="✅" />
+            <StatCard number={`${stats.cookTime}m`} label="Avg Cook Time" icon="⏱️" />
           </div>
-          <Link href="/recipes" className="hidden sm:inline-block btn btn-ghost">
-            View All →
-          </Link>
-        </div>
+        </motion.section>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="loading-skeleton rounded-2xl h-80"></div>
-            ))}
-          </div>
-        ) : featuredRecipes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredRecipes.map((recipe, index) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                index={index}
-                showCookMode={true}
-                variant="featured"
-              />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20 bg-gradient-to-br from-slate-50 to-amber-50/30 rounded-2xl border border-amber-100"
-          >
-            <div className="text-6xl mb-4">👨‍🍳</div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">No recipes yet</h3>
-            <p className="text-lg text-slate-600 mb-8">Be the first to share an authentic recipe!</p>
-            <Link href="/add-recipe" className="btn btn-primary">
-              Add First Recipe
-            </Link>
-          </motion.div>
-        )}
-      </motion.section>
-
-      {/* Enhanced CTA Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 px-8 py-20 md:px-16 md:py-28 text-center text-white mb-24 -mx-4 md:-mx-6"
-      >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}></div>
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to Cook?</h2>
-            <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of home chefs exploring authentic recipes with our Cook Mode, Recipe Map, and Smart Search features.
+        {/* Enhanced Features Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-24"
+        >
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Powerful Features for <span className="text-gradient-primary">Home Chefs</span>
+            </motion.h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Everything you need to become a world-class home chef with cutting-edge cooking tools
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/recipes" className="px-10 py-4 bg-white text-amber-700 font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
-                Start Cooking Now
-              </Link>
-              <Link href="/add-recipe" className="px-10 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-amber-700 transition-all duration-300 text-lg">
-                Share Your Recipe
-              </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <FeatureCard
+              icon="🍳"
+              title="Cook Mode"
+              description="Distraction-free cooking experience with step-by-step guidance, timers, and voice commands."
+              href="/recipes"
+              gradient="from-amber-500 to-orange-600"
+            />
+            <FeatureCard
+              icon="🗺️"
+              title="Recipe Map"
+              description="Explore authentic recipes by geographic origin and discover dishes from around the world."
+              href="/map"
+              gradient="from-blue-500 to-purple-600"
+            />
+            <FeatureCard
+              icon="🔍"
+              title="Smart Search"
+              description="AI-powered search with auto-suggestions, ingredient matching, and authenticity filtering."
+              href="/recipes"
+              gradient="from-green-500 to-teal-600"
+            />
+          </div>
+        </motion.section>
+
+        {/* Map Preview Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-24"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Explore Recipes by <span className="text-gradient-secondary">Location</span>
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Discover authentic dishes from their countries of origin
+            </p>
+          </div>
+          
+          <MapPreviewCard recipes={recipes.slice(0, 12)} />
+        </motion.section>
+
+        {/* Featured Recipes Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-24"
+        >
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Featured Recipes</h2>
+              <p className="text-lg text-slate-600">Recently added authentic dishes from our community</p>
             </div>
-          </motion.div>
-        </div>
-      </motion.section>
+            <Link href="/recipes" className="hidden sm:inline-block btn btn-ghost">
+              View All →
+            </Link>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="loading-skeleton rounded-2xl h-80"></div>
+              ))}
+            </div>
+          ) : featuredRecipes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredRecipes.map((recipe, index) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  index={index}
+                  showCookMode={true}
+                  variant="featured"
+                />
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20 bg-gradient-to-br from-slate-50 to-amber-50/30 rounded-2xl border border-amber-100"
+            >
+              <div className="text-6xl mb-4">👨‍🍳</div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">No recipes yet</h3>
+              <p className="text-lg text-slate-600 mb-8">Be the first to share an authentic recipe!</p>
+              <Link href="/add-recipe" className="btn btn-primary">
+                Add First Recipe
+              </Link>
+            </motion.div>
+          )}
+        </motion.section>
+
+        {/* Enhanced CTA Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 px-8 py-20 md:px-16 md:py-28 text-center text-white mb-24"
+        >
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 left-0 w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }}></div>
+          </div>
+
+          <div className="relative z-10 max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to Cook?</h2>
+              <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Join thousands of home chefs exploring authentic recipes with our Cook Mode, Recipe Map, and Smart Search features.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/recipes" className="px-10 py-4 bg-white text-amber-700 font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
+                  Start Cooking Now
+                </Link>
+                <Link href="/add-recipe" className="px-10 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-amber-700 transition-all duration-300 text-lg">
+                  Share Your Recipe
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </motion.section>
+      </div>
     </Layout>
   );
 }

@@ -303,10 +303,10 @@ export default function SmartSearchBar() {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-4xl mx-auto">
+    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto">
       {/* Search Input Container */}
       <div className={`
-        relative bg-white rounded-2xl border-2 transition-all duration-300 shadow-lg
+        relative bg-white rounded-xl border-2 transition-all duration-300 shadow-lg
         ${isOpen ? 'border-amber-400 shadow-xl' : 'border-slate-200'}
         ${isListening ? 'ring-2 ring-red-200 border-red-300' : ''}
       `}>
@@ -315,43 +315,45 @@ export default function SmartSearchBar() {
           <button
             onClick={() => setActiveTab('recipes')}
             className={`
-              flex-1 px-4 py-3 text-sm font-medium rounded-t-2xl transition-colors
+              flex-1 px-3 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-colors
               ${activeTab === 'recipes' 
                 ? 'bg-amber-50 text-amber-700 border-b-2 border-amber-400' 
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }
             `}
           >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <span className="flex items-center justify-center gap-1 sm:gap-2">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd" />
               </svg>
-              Find Recipes
+              <span className="hidden sm:inline">Find Recipes</span>
+              <span className="sm:hidden">Recipes</span>
             </span>
           </button>
           <button
             onClick={() => setActiveTab('research')}
             className={`
-              flex-1 px-4 py-3 text-sm font-medium rounded-t-2xl transition-colors
+              flex-1 px-3 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-colors
               ${activeTab === 'research' 
                 ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-400' 
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }
             `}
           >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <span className="flex items-center justify-center gap-1 sm:gap-2">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M9.504 1.132a1 1 0 01.992 0l1.75 1a1 1 0 11-.992 1.736L10 3.152l-1.254.716a1 1 0 11-.992-1.736l1.75-1zM5.618 4.504a1 1 0 01-.372 1.364L5.016 6l.23.132a1 1 0 11-.992 1.736L3 7.723V8a1 1 0 01-2 0V6a.996.996 0 01.52-.878l1.734-.99a1 1 0 011.364.372zm8.764 0a1 1 0 011.364-.372l1.733.99A1.002 1.002 0 0118 6v2a1 1 0 11-2 0v-.277l-1.254.145a1 1 0 11-.992-1.736L14.984 6l-.23-.132a1 1 0 01-.372-1.364zm-7 4a1 1 0 011.364-.372L10 8.848l1.254-.716a1 1 0 11.992 1.736L11 10.723V12a1 1 0 11-2 0v-1.277l-1.246-.855a1 1 0 01-.372-1.364zM3 11a1 1 0 011 1v1.277l1.246.855a1 1 0 01-.992 1.736l-1.75-1A1 1 0 012 14v-2a1 1 0 011-1zm14 0a1 1 0 011 1v2a1.002 1.002 0 01-.504.868l-1.75 1a1 1 0 11-.992-1.736L16 13.277V12a1 1 0 011-1zm-9.618 5.504a1 1 0 011.364.372l.254.145V16a1 1 0 112 0v1.021l.254-.145a1 1 0 11.992 1.736l-1.735.992a.995.995 0 01-1.022 0l-1.735-.992a1 1 0 01-.372-1.364z" clipRule="evenodd" />
               </svg>
-              Ask About Food Culture
+              <span className="hidden sm:inline">Ask About Food Culture</span>
+              <span className="sm:hidden">Research</span>
             </span>
           </button>
         </div>
         
         {/* Input Field */}
-        <div className="relative flex items-center p-4">
-          <div className="absolute left-6 text-slate-400">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="relative flex items-center p-3 sm:p-4">
+          <div className="absolute left-4 sm:left-6 text-slate-400">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -368,11 +370,11 @@ export default function SmartSearchBar() {
               }
             }}
             placeholder={activeTab === 'recipes' 
-              ? "Search for recipes, ingredients, or cuisines..."
-              : "Ask about food traditions, festivals, or cultural dishes..."
+              ? "Search recipes, ingredients..."
+              : "Ask about food traditions..."
             }
             className="
-              w-full pl-12 pr-24 py-3 text-lg bg-transparent
+              w-full pl-10 sm:pl-12 pr-16 sm:pr-24 py-2 sm:py-3 text-sm sm:text-lg bg-transparent
               focus:outline-none placeholder-slate-400
             "
           />
@@ -382,7 +384,7 @@ export default function SmartSearchBar() {
             <button
               onClick={isListening ? stopListening : startListening}
               className={`
-                absolute right-16 p-2 rounded-lg transition-all duration-200
+                absolute right-12 sm:right-16 p-1.5 sm:p-2 rounded-lg transition-all duration-200
                 ${isListening 
                   ? 'bg-red-100 text-red-600 animate-pulse scale-110' 
                   : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
@@ -390,7 +392,7 @@ export default function SmartSearchBar() {
               `}
               title={isListening ? 'Stop listening' : 'Voice search'}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
               </svg>
             </button>
@@ -398,20 +400,20 @@ export default function SmartSearchBar() {
           
           {/* Loading Spinner or Clear Button */}
           {isLoading ? (
-            <div className="absolute right-4 flex items-center">
+            <div className="absolute right-3 sm:right-4 flex items-center">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full"
+                className="h-4 w-4 sm:h-5 sm:w-5 border-2 border-amber-500 border-t-transparent rounded-full"
               />
             </div>
           ) : query ? (
             <button
               onClick={handleClearQuery}
-              className="absolute right-4 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+              className="absolute right-3 sm:right-4 p-1 text-slate-400 hover:text-slate-600 transition-colors"
               title="Clear search"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
