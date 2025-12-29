@@ -248,8 +248,8 @@ export default function MapPage() {
   });
 
   // Get unique values for filters
-  const uniqueCuisines = [...new Set(recipes.map((r: Recipe) => r.cuisine))].filter(Boolean);
-  const uniqueDifficulties = [...new Set(recipes.map((r: Recipe) => r.difficulty))].filter(Boolean);
+  const uniqueCuisines = [...new Set(recipes.map((r: Recipe) => r.cuisine))].filter(Boolean) as string[];
+  const uniqueDifficulties = [...new Set(recipes.map((r: Recipe) => r.difficulty))].filter(Boolean) as string[];
 
   const handleFilterChange = (filterType: keyof MapFilters, value: string) => {
     setFilters(prev => ({

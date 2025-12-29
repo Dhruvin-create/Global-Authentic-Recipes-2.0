@@ -394,27 +394,7 @@ function parseSearchResult(row: any): SearchResult {
  * Implements rate limiting and quota checks
  */
 async function isAutoFindAllowed(clientIp: string, req: NextApiRequest): Promise<boolean> {
-  const userId = (req as any).user?.id; // From auth middleware if available
-
-  try {
-    // Get auto-find limits
-    const dailyLimit = userId ? 50 : 5; // Authenticated users get higher limit
-    const limitKey = userId ? `autofind:user:${userId}` : `autofind:ip:${clientIp}`;
-
-    // Check Redis for count
-    const { getRedisClient } = require('@/lib/redis');
-    const redis = getRedisClient();
-    const count = await redis.incr(limitKey);
-
-    if (count === 1) {
-      // Set expiry on first increment
-      await redis.expire(limitKey, 86400); // 24 hours
-    }
-
-    return count <= dailyLimit;
-  } catch (err) {
-    console.error('Auto-find allow check error:', err);
-    // Default to allow on error (fail-open)
-    return true;
-  }
+  // TODO: Implement Redis rate limiting when Redis is configured
+  // For now, we'll allow all auto-find requests
+  return true;
 }

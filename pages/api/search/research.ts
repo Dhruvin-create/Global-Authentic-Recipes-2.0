@@ -160,7 +160,11 @@ Return only valid JSON.
     return {
       intent: 'general_recipe',
       entities: {
-        search_terms: query.split(' ').filter(word => word.length > 2)
+        countries: [],
+        festivals: [],
+        ingredients: [],
+        occasions: [],
+        time_periods: []
       },
       cultural_context: 'General food inquiry',
       search_terms: query.split(' ').filter(word => word.length > 2)
