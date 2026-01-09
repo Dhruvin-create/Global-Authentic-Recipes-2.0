@@ -21,8 +21,8 @@ function EnhancedNavbar() {
 
   const navItems = [
     { label: 'Recipes', href: '/recipes', icon: '📖' },
+    { label: 'Discover', href: '/discover', icon: '🌍' },
     { label: 'Research', href: '/research', icon: '🔍' },
-    { label: 'Map View', href: '/map', icon: '🗺️' },
     { label: 'Add Recipe', href: '/add-recipe', icon: '➕', primary: true },
   ];
 

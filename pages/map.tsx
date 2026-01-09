@@ -55,7 +55,8 @@ export default function MapPage() {
   const infoWindowRef = useRef<any>(null);
 
   // Fetch recipes data
-  const { data: recipes = [], error } = useSWR('/api/recipes/map', fetcher);
+  const { data, error } = useSWR('/api/recipes/map', fetcher);
+  const recipes = data?.recipes || [];
 
   // Initialize Google Maps
   useEffect(() => {
@@ -134,7 +135,7 @@ export default function MapPage() {
 
   // Create markers when recipes data is available
   useEffect(() => {
-    if (!map || !recipes.length) return;
+    if (!map || !Array.isArray(recipes) || recipes.length === 0) return;
 
     // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
@@ -225,7 +226,7 @@ export default function MapPage() {
   }, [map, recipes]);
 
   // Filter recipes based on current filters and search
-  const filteredRecipes = recipes.filter((recipe: Recipe) => {
+  const filteredRecipes = Array.isArray(recipes) ? recipes.filter((recipe: Recipe) => {
     if (searchQuery && !recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !recipe.origin_country.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !recipe.cuisine.toLowerCase().includes(searchQuery.toLowerCase())) {
@@ -245,11 +246,11 @@ export default function MapPage() {
     }
 
     return true;
-  });
+  }) : [];
 
   // Get unique values for filters
-  const uniqueCuisines = [...new Set(recipes.map((r: Recipe) => r.cuisine))].filter(Boolean) as string[];
-  const uniqueDifficulties = [...new Set(recipes.map((r: Recipe) => r.difficulty))].filter(Boolean) as string[];
+  const uniqueCuisines = Array.isArray(recipes) ? [...new Set(recipes.map((r: Recipe) => r.cuisine))].filter(Boolean) as string[] : [];
+  const uniqueDifficulties = Array.isArray(recipes) ? [...new Set(recipes.map((r: Recipe) => r.difficulty))].filter(Boolean) as string[] : [];
 
   const handleFilterChange = (filterType: keyof MapFilters, value: string) => {
     setFilters(prev => ({
@@ -470,7 +471,7 @@ export default function MapPage() {
             {/* Stats Overlay */}
             <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{recipes.length}</div>
+                <div className="text-2xl font-bold text-slate-900">{Array.isArray(recipes) ? recipes.length : 0}</div>
                 <div className="text-sm text-slate-600">Recipes Mapped</div>
               </div>
             </div>

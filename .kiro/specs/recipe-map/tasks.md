@@ -6,7 +6,7 @@ This implementation plan breaks down the Recipe Map View feature into discrete, 
 
 ## Tasks
 
-- [ ] 1. Extend database schema for geographic data
+- [x] 1. Extend database schema for geographic data
   - Add latitude, longitude, country, and region columns to recipes table
   - Create countries metadata table with cultural context
   - Create recipe_locations table for regional dish support
@@ -14,11 +14,11 @@ This implementation plan breaks down the Recipe Map View feature into discrete, 
   - Create database migration scripts
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 1.1 Write property test for geographic data integrity
+- [x] 1.1 Write property test for geographic data integrity
   - **Property 1: Geographic Data Integrity**
   - **Validates: Requirements 1.1, 1.2, 1.3, 1.6**
 
-- [ ] 1.2 Write unit tests for database schema and migrations
+- [x] 1.2 Write unit tests for database schema and migrations
   - Test coordinate validation and constraints
   - Test country data completeness
   - Test fallback coordinate behavior

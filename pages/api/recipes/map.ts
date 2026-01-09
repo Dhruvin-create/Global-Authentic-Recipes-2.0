@@ -1,14 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import mysql from 'mysql2/promise';
-
-// Database connection configuration
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'recipes_db',
-  charset: 'utf8mb4'
-};
+import { executeQuery, initializeDatabase } from '../../../lib/db';
 
 interface MapRecipe {
   id: string;
@@ -141,10 +132,11 @@ export default async function handler(
   }
 
   try {
-    const connection = await mysql.createConnection(dbConfig);
+    // Initialize database if needed
+    await initializeDatabase();
 
     // Fetch all published recipes with location data
-    const [rows] = await connection.execute(`
+    const rows = await executeQuery(`
       SELECT 
         r.id,
         r.title,
@@ -159,17 +151,11 @@ export default async function handler(
         r.longitude,
         r.region,
         r.city,
-        r.created_at,
-        COALESCE(AVG(rt.rating), 0) as avg_rating,
-        COUNT(rt.id) as rating_count
+        r.created_at
       FROM recipes r
-      LEFT JOIN recipe_ratings rt ON r.id = rt.recipe_id
       WHERE r.status = 'published'
-      GROUP BY r.id
       ORDER BY r.popularity_score DESC, r.created_at DESC
     `);
-
-    await connection.end();
 
     const recipes = (rows as any[]).map(row => {
       let latitude = row.latitude;
@@ -199,9 +185,7 @@ export default async function handler(
         longitude,
         region: row.region,
         city: row.city,
-        created_at: row.created_at,
-        avg_rating: parseFloat(row.avg_rating) || 0,
-        rating_count: parseInt(row.rating_count) || 0
+        created_at: row.created_at
       };
     }).filter(recipe => recipe.latitude && recipe.longitude); // Only include recipes with coordinates
 

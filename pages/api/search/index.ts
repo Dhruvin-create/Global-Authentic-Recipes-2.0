@@ -1,14 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import mysql from 'mysql2/promise';
-
-// Database connection configuration
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'recipes_db',
-  charset: 'utf8mb4'
-};
+import { executeQuery, createConnection } from '../../../lib/db';
 
 interface SearchFilters {
   authenticity?: string[];
@@ -108,7 +99,7 @@ export default async function handler(
   };
 
   try {
-    const connection = await mysql.createConnection(dbConfig);
+    const connection = await createConnection();
 
     // Build dynamic WHERE clause for filters
     let filterConditions: string[] = [];
@@ -260,13 +251,13 @@ export default async function handler(
 
     // Execute both queries
     const [searchResults, countResults] = await Promise.all([
-      connection.execute(searchQuery, searchParams),
-      connection.execute(countQuery, countParams)
+      connection.query(searchQuery, searchParams),
+      connection.query(countQuery, countParams)
     ]);
 
-    await connection.end();
+    await connection.close();
 
-    const results = (searchResults[0] as any[]).map(row => {
+    const results = (searchResults as any[]).map(row => {
       // Parse ingredients for preview
       let ingredientsPreview: string[] = [];
       try {
@@ -302,7 +293,7 @@ export default async function handler(
       };
     });
 
-    const totalResults = (countResults[0] as any[])[0]?.total || 0;
+    const totalResults = (countResults as any[])[0]?.total || 0;
     const totalPages = Math.ceil(totalResults / perPage);
 
     // Check if we should trigger auto-generation for empty results
@@ -325,12 +316,12 @@ export default async function handler(
 
     // Log search analytics
     try {
-      const analyticsConnection = await mysql.createConnection(dbConfig);
-      await analyticsConnection.execute(
+      const analyticsConnection = await createConnection();
+      await analyticsConnection.query(
         'INSERT INTO search_analytics (query, results_count, search_type, response_time_ms) VALUES (?, ?, ?, ?)',
         [searchTerm, results.length, 'full_search', Date.now() % 1000]
       );
-      await analyticsConnection.end();
+      await analyticsConnection.close();
     } catch (analyticsError) {
       console.error('Analytics logging failed:', analyticsError);
     }
