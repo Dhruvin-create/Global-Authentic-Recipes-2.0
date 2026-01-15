@@ -1,3 +1,17 @@
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+
+# Sitemap
+Sitemap: https://global-authentic-recipes.vercel.app/sitemap.xml
+
+# Disallow admin or private areas (if any)
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow all recipe pages
+Allow: /recipes/
+Allow: /favorites/
+
+# Crawl delay (optional)
+Crawl-delay: 1
