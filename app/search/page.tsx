@@ -21,9 +21,9 @@ interface SearchFilters {
 
 function SearchContent() {
   const searchParams = useSearchParams()
-  const initialQuery = searchParams.get('q') || ''
-  const initialCategory = searchParams.get('category') || ''
-  const initialArea = searchParams.get('area') || ''
+  const initialQuery = searchParams?.get('q') || ''
+  const initialCategory = searchParams?.get('category') || ''
+  const initialArea = searchParams?.get('area') || ''
   
   const [query, setQuery] = useState(initialQuery)
   const [searchInput, setSearchInput] = useState(initialQuery)
@@ -39,9 +39,9 @@ function SearchContent() {
 
   // Update query when URL params change
   useEffect(() => {
-    const urlQuery = searchParams.get('q') || ''
-    const urlCategory = searchParams.get('category') || ''
-    const urlArea = searchParams.get('area') || ''
+    const urlQuery = searchParams?.get('q') || ''
+    const urlCategory = searchParams?.get('category') || ''
+    const urlArea = searchParams?.get('area') || ''
     
     if (urlQuery !== query) {
       setQuery(urlQuery)

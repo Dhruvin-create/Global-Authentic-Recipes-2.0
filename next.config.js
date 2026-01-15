@@ -1,39 +1,4 @@
 /** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-  buildExcludes: [/middleware-manifest\.json$/],
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/www\.themealdb\.com\/api\/.*/i,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'themealdb-api-cache',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 24 * 60 * 60, // 24 hours
-        },
-        cacheKeyWillBeUsed: async ({ request }) => {
-          return `${request.url}`;
-        },
-      },
-    },
-    {
-      urlPattern: /^https:\/\/www\.themealdb\.com\/images\/.*/i,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'themealdb-images-cache',
-        expiration: {
-          maxEntries: 200,
-          maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
-        },
-      },
-    },
-  ],
-});
-
 const nextConfig = {
   serverExternalPackages: [],
   images: {
@@ -97,4 +62,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;
