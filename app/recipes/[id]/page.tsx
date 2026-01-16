@@ -1,5 +1,6 @@
 'use client'
 
+import { use } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -31,13 +32,14 @@ import { RecipeCard } from '@/components/recipe-card'
 import { useState, useEffect } from 'react'
 
 interface RecipeDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
-  const { recipe, isLoading, isError } = useRecipe(params.id)
+  const { id } = use(params)
+  const { recipe, isLoading, isError } = useRecipe(id)
   const { suggestions, isLoading: suggestionsLoading } = useRecipeSuggestions(recipe || null)
   const { isFavorite, toggleFavorite } = useFavoritesStore()
   const { addRecipeToShoppingList } = useShoppingStore()
