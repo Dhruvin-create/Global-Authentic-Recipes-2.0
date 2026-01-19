@@ -1,0 +1,44 @@
+# Vercel Ignore File - Exclude from deployment
+
+# Backup directories (old code)
+pages-backup/
+src-backup/
+backend-backup/
+
+# Database files (not needed)
+*.db
+*.sqlite
+*.sql
+recipes.db
+recipes_db.backup.sql
+
+# Migration scripts (not needed)
+*migration*.js
+*migration*.sql
+setup-*.js
+run-*.js
+
+# Test files
+__tests__/
+*.test.js
+*.test.ts
+test-*.js
+
+# Development files
+.env.local
+.env.example
+
+# Documentation
+*.md
+!README.md
+
+# Logs
+*.log
+final_stats.log
+migration.log
+schema_check.log
+table_check.log
+
+# Temporary files
+.DS_Store
+Thumbs.db
