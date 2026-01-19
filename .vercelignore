@@ -1,44 +1,63 @@
 # Vercel Ignore File - Exclude from deployment
 
-# Backup directories (old code)
+# Backup directories (old code that causes MySQL errors)
 pages-backup/
 src-backup/
 backend-backup/
+migrations/
 
-# Database files (not needed)
+# Database files (not needed - using TheMealDB API)
 *.db
 *.sqlite
 *.sql
 recipes.db
 recipes_db.backup.sql
+database-schema*.sql
+create_indexes.sql
 
-# Migration scripts (not needed)
+# Migration and setup scripts (not needed)
 *migration*.js
 *migration*.sql
 setup-*.js
 run-*.js
+verify-database.js
+test-map-api.js
 
-# Test files
+# Test files (not needed in production)
 __tests__/
 *.test.js
 *.test.ts
 test-*.js
+jest.config.js
+jest.setup.js
 
 # Development files
 .env.local
 .env.example
+.env.local.example
 
-# Documentation
+# Documentation (keep only README)
 *.md
 !README.md
+BACKEND_SETUP.md
+DATABASE_*.md
+DEPLOYMENT_GUIDE.md
+VERCEL_DEPLOYMENT_STATUS.md
+GOOGLE_MAPS_INTEGRATION.md
+SMART_SEARCH_IMPLEMENTATION.md
+FRONTEND_IMPROVEMENTS.md
+LOCATION_RECIPE_DISCOVERY.md
+MIGRATION_*.md
+QUICKSTART.md
 
-# Logs
+# Logs and temporary files
 *.log
 final_stats.log
 migration.log
 schema_check.log
 table_check.log
-
-# Temporary files
 .DS_Store
 Thumbs.db
+
+# Spec files (not needed in production)
+.kiro/
