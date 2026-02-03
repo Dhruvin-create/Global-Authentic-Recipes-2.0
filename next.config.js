@@ -19,8 +19,12 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  output: 'standalone',
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://www.themealdb.com/api/json/v1/1',
   },
   async headers() {
     return [
@@ -39,24 +43,19 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
+    ];
+  },
+  async rewrites() {
+    return [
       {
-        source: '/api/(.*)',
-        headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS',
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization',
-          },
-        ],
+        source: '/api/themealdb/:path*',
+        destination: 'https://www.themealdb.com/api/json/v1/1/:path*',
       },
     ];
   },

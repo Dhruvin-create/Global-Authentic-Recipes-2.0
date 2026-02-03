@@ -1,63 +1,76 @@
-# Vercel Ignore File - Exclude from deployment
-
-# Backup directories (old code that causes MySQL errors)
-pages-backup/
-src-backup/
-backend-backup/
-migrations/
-
-# Database files (not needed - using TheMealDB API)
-*.db
-*.sqlite
-*.sql
-recipes.db
-recipes_db.backup.sql
-database-schema*.sql
-create_indexes.sql
-
-# Migration and setup scripts (not needed)
-*migration*.js
-*migration*.sql
-setup-*.js
-run-*.js
-verify-database.js
-test-map-api.js
-
-# Test files (not needed in production)
-__tests__/
-*.test.js
-*.test.ts
-test-*.js
-jest.config.js
-jest.setup.js
+# Vercel Ignore File
+# Files and directories to ignore during deployment
 
 # Development files
 .env.local
-.env.example
-.env.local.example
+.env.development
+.env.test
 
-# Documentation (keep only README)
-*.md
-!README.md
-BACKEND_SETUP.md
-DATABASE_*.md
-DEPLOYMENT_GUIDE.md
-VERCEL_DEPLOYMENT_STATUS.md
-GOOGLE_MAPS_INTEGRATION.md
-SMART_SEARCH_IMPLEMENTATION.md
-FRONTEND_IMPROVEMENTS.md
-LOCATION_RECIPE_DISCOVERY.md
-MIGRATION_*.md
-QUICKSTART.md
+# Build artifacts
+.next/
+out/
 
-# Logs and temporary files
+# Dependencies
+node_modules/
+
+# Logs
 *.log
-final_stats.log
-migration.log
-schema_check.log
-table_check.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Spec files (not needed in production)
-.kiro/
+# Backup files
+*.backup
+*.bak
+*-backup/
+*-backup.*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Test files
+__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+
+# Documentation
+*.md
+!README.md
+
+# Migration files
+migrations/
+*.sql
+
+# Temporary files
+tmp/
+temp/
