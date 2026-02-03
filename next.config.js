@@ -19,7 +19,6 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  output: 'standalone',
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
