@@ -36,10 +36,8 @@ Thumbs.db
 .env.test.local
 
 # Database
-*.sql
-!database-schema.sql
-!database-schema-v2-enhanced.sql
-!MIGRATION_SCRIPTS.sql
+# Allow all SQL files in database folder
+!database/*.sql
 
 # Temp files
 tmp/
@@ -47,3 +45,11 @@ temp/
 *.tmp
 .vercel
 .env*.local
+
+# Test files (optional - uncomment to exclude)
+test-*.js
+check-users-db.js
+fix-user-passwords.js
+list-users.js
+update-admin.js
+test_output.txt
