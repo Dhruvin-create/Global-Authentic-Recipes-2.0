@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  Users, Plus, Search, Filter, Shield, User, 
-  Edit, Trash2, CheckCircle, XCircle, ArrowLeft 
+  Users, Plus, Search, Edit, Trash2, CheckCircle, XCircle, ArrowLeft, X 
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,6 +12,9 @@ export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     role: '',
@@ -259,8 +261,25 @@ export default function UsersManagementPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <button className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                            <Edit className="w-4 h-4" />
+                          <button 
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowEditModal(true);
+                            }}
+                            className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/20 hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors"
+                            title="Edit User"
+                          >
+                            <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowDeleteModal(true);
+                            }}
+                            className="p-2 rounded-xl bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
+                            title="Delete User"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
                           </button>
                         </div>
                       </td>
@@ -299,6 +318,38 @@ export default function UsersManagementPage() {
           onClose={() => setShowCreateModal(false)}
           onSuccess={() => {
             setShowCreateModal(false);
+            loadUsers();
+          }}
+        />
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <EditUserModal 
+          user={selectedUser}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedUser(null);
+          }}
+          onSuccess={() => {
+            setShowEditModal(false);
+            setSelectedUser(null);
+            loadUsers();
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedUser && (
+        <DeleteConfirmationModal 
+          user={selectedUser}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedUser(null);
+          }}
+          onSuccess={() => {
+            setShowDeleteModal(false);
+            setSelectedUser(null);
             loadUsers();
           }}
         />
@@ -367,9 +418,14 @@ function CreateAdminModal({ onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-          Create Admin Account
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Create Admin Account
+          </h2>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 mb-6">
@@ -449,6 +505,324 @@ function CreateAdminModal({ onClose, onSuccess }) {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// Edit User Modal Component
+function EditUserModal({ user, onClose, onSuccess }) {
+  const [formData, setFormData] = useState({
+    username: user.username || '',
+    firstName: user.first_name || '',
+    lastName: user.last_name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+    role: user.role,
+    isVerified: user.is_verified
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          username: formData.username,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email || null,
+          phone: formData.phone || null,
+          role: formData.role,
+          isVerified: formData.isVerified
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        onSuccess();
+      } else {
+        setError(data.message || 'Failed to update user');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 w-full max-w-2xl my-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Edit User
+          </h2>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 mb-6">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                required
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                Role
+              </label>
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="USER">User</option>
+                <option value="ADMIN">Admin</option>
+                <option value="SUPER_ADMIN">Super Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                First Name
+              </label>
+              <input
+                type="text"
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                Last Name
+              </label>
+              <input
+                type="text"
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+              Email (Optional)
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+              Phone (Optional)
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="+91XXXXXXXXXX"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+            <input
+              type="checkbox"
+              id="isVerified"
+              checked={formData.isVerified}
+              onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
+              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+            />
+            <label htmlFor="isVerified" className="text-sm font-bold text-slate-700 dark:text-slate-300">
+              Account Verified
+            </label>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 btn-primary disabled:opacity-50"
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// Delete Confirmation Modal Component
+function DeleteConfirmationModal({ user, onClose, onSuccess }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [confirmText, setConfirmText] = useState('');
+
+  const handleDelete = async () => {
+    if (confirmText !== 'DELETE') {
+      setError('Please type DELETE to confirm');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/admin/users?userId=${user.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        onSuccess();
+      } else {
+        setError(data.message || 'Failed to delete user');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 w-full max-w-md">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">
+            Delete User
+          </h2>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 mb-4">
+            <p className="text-sm text-red-600 dark:text-red-400 font-bold mb-2">
+              ⚠️ Warning: This action cannot be undone!
+            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              All user data including recipes, reviews, and favorites will be permanently deleted.
+            </p>
+          </div>
+
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Name:</span>
+              <span className="text-sm text-slate-900 dark:text-white">{user.name}</span>
+            </div>
+            {user.username && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Username:</span>
+                <span className="text-sm text-slate-900 dark:text-white">@{user.username}</span>
+              </div>
+            )}
+            {user.email && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Email:</span>
+                <span className="text-sm text-slate-900 dark:text-white">{user.email}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-600 dark:text-slate-400">Role:</span>
+              <span className={`text-sm font-bold ${
+                user.role === 'SUPER_ADMIN' ? 'text-red-600' :
+                user.role === 'ADMIN' ? 'text-orange-600' :
+                'text-green-600'
+              }`}>
+                {user.role}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 mb-4">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
+
+        <div className="mb-6">
+          <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+            Type <span className="text-red-600">DELETE</span> to confirm
+          </label>
+          <input
+            type="text"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="DELETE"
+            className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={loading || confirmText !== 'DELETE'}
+            className="flex-1 px-4 py-3 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? 'Deleting...' : 'Delete User'}
+          </button>
+        </div>
       </div>
     </div>
   );

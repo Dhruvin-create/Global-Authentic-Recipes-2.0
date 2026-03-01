@@ -1,6 +1,21 @@
+'use client';
+
 import { Search, MapPin, ArrowRight, Play, Globe, Sparkles } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    const handleStartCooking = () => {
+        if (isAuthenticated) {
+            router.push('/recipes');
+        } else {
+            router.push('/signup');
+        }
+    };
+
     return (
         <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-50 dark:bg-slate-950">
             {/* Background Decorative Elements */}
@@ -26,7 +41,10 @@ export default function Hero() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-5">
-                            <button className="btn-primary py-5 px-10 text-lg group">
+                            <button 
+                                onClick={handleStartCooking}
+                                className="btn-primary py-5 px-10 text-lg group"
+                            >
                                 Start Cooking
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
                             </button>

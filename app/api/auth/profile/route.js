@@ -26,7 +26,10 @@ async function getProfileHandler(request) {
     const profiles = await executeQuery(`
       SELECT 
         u.id,
+        u.username,
         u.name,
+        u.first_name,
+        u.last_name,
         u.email,
         u.phone,
         u.avatar,
@@ -53,7 +56,10 @@ async function getProfileHandler(request) {
     return successResponse({
       profile: {
         id: profile.id,
+        username: profile.username,
         name: profile.name,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
         email: profile.email,
         phone: profile.phone,
         avatar: profile.avatar,

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChefHat, Heart, MessageSquare, TrendingUp, LogOut, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { ChefHat, Heart, MessageSquare, TrendingUp, LogOut, Plus, UserCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
 export default function AdminDashboard() {
@@ -64,13 +65,22 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="font-bold">Logout</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                <UserCircle className="w-5 h-5" />
+                <span className="font-bold">Profile</span>
+              </Link>
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-bold">Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

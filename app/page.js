@@ -1,9 +1,24 @@
+'use client';
+
 import Hero from '@/components/Hero';
 import CategorySection from '@/components/CategorySection';
 import FeaturedRecipes from '@/components/FeaturedRecipes';
 import { ChefHat, Globe, Users, Award, ArrowRight, Sparkles } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    const handleGetStarted = () => {
+        if (isAuthenticated) {
+            router.push('/recipes');
+        } else {
+            router.push('/signup');
+        }
+    };
+
     return (
         <main className="bg-white dark:bg-slate-950">
             <Hero />
@@ -53,7 +68,10 @@ export default function Home() {
                                 Join 50,000+ home chefs and start your culinary journey today. Save recipes, share your own, and get daily inspiration.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                                <button className="btn-primary py-5 px-12 text-lg shadow-2xl shadow-primary-500/40">
+                                <button 
+                                    onClick={handleGetStarted}
+                                    className="btn-primary py-5 px-12 text-lg shadow-2xl shadow-primary-500/40"
+                                >
                                     Get Started Free
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1" />
                                 </button>

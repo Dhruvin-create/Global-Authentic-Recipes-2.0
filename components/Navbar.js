@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, ChefHat, Heart, User, LogOut } from 'lucide-react';
+import { Search, Menu, X, ChefHat, Heart, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Navbar() {
@@ -82,6 +82,10 @@ export default function Navbar() {
                                         {/* Dropdown Menu */}
                                         <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                             <div className="p-2">
+                                                <Link href="/profile" className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                                    <Settings className="w-4 h-4" />
+                                                    <span className="text-sm font-bold">Profile Settings</span>
+                                                </Link>
                                                 {isSuperAdmin && (
                                                     <Link href="/super-admin/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                                                         <span className="text-sm font-bold">Super Admin</span>
@@ -104,14 +108,26 @@ export default function Navbar() {
                                     </div>
                                 </>
                             ) : (
-                                <>
-                                    <Link href="/login" className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary-500 transition-all">
-                                        Login
-                                    </Link>
-                                    <Link href="/signup" className="btn-primary px-4 py-2 text-sm">
-                                        Sign Up
-                                    </Link>
-                                </>
+                                /* Profile Button for Non-Authenticated Users */
+                                <div className="relative group">
+                                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                                        <User className="w-5 h-5" />
+                                        <span className="font-bold text-sm">Account</span>
+                                    </button>
+                                    
+                                    {/* Dropdown Menu */}
+                                    <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                        <div className="p-2">
+                                            <Link href="/login" className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                                <User className="w-4 h-4" />
+                                                <span className="text-sm font-bold">Login</span>
+                                            </Link>
+                                            <Link href="/signup" className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 transition-all">
+                                                <span className="text-sm font-bold">Sign Up</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -145,6 +161,9 @@ export default function Navbar() {
                                 <div className="text-sm text-slate-600 dark:text-slate-400">
                                     Welcome, {user?.name}
                                 </div>
+                                <Link href="/profile" className="btn-primary w-full text-center">
+                                    Profile Settings
+                                </Link>
                                 {isSuperAdmin && (
                                     <Link href="/super-admin/dashboard" className="btn-primary w-full text-center">
                                         Super Admin
@@ -164,10 +183,10 @@ export default function Navbar() {
                             </>
                         ) : (
                             <>
-                                <Link href="/login" className="btn-primary w-full text-center">
+                                <Link href="/login" className="w-full text-center px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
                                     Login
                                 </Link>
-                                <Link href="/signup" className="w-full text-center px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                                <Link href="/signup" className="btn-primary w-full text-center">
                                     Sign Up
                                 </Link>
                             </>

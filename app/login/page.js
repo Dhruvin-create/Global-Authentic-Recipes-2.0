@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, AtSign } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
@@ -11,6 +11,14 @@ export default function LoginPage() {
     identifier: '',
     password: ''
   });
+  
+  // Clear any browser autofill
+  useEffect(() => {
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.setAttribute('autocomplete', 'off');
+    });
+  }, []);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -108,7 +116,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             {/* Error Message */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 flex items-start gap-3">
@@ -130,6 +138,7 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                   placeholder="Enter username, email or phone"
                   required
+                  autoComplete="off"
                   className="w-full pl-12 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                 />
               </div>
@@ -148,6 +157,7 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Enter your password"
                   required
+                  autoComplete="off"
                   className="w-full pl-12 pr-12 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                 />
                 <button
@@ -200,15 +210,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Test Credentials */}
-          <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Test Accounts:</p>
-            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
-              <p>🔴 Super Admin: superadmin@globalrecipes.com / SuperAdmin@123</p>
-              <p>🟡 Admin: admin@recipes.com / password123</p>
-              <p>🟢 User: user@example.com / password123</p>
-            </div>
-          </div>
+
         </div>
 
         {/* Back to Home */}

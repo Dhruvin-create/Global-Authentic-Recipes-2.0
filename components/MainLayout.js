@@ -11,8 +11,9 @@ export default function MainLayout({ children }) {
     const isAdminPage = pathname?.startsWith('/admin');
     const isSuperAdminPage = pathname?.startsWith('/super-admin');
     const isAuthPage = pathname === '/login' || pathname === '/signup';
+    const isProfilePage = pathname === '/profile';
     
-    const hideNavbar = isAdminPage || isSuperAdminPage || isAuthPage;
+    const hideNavbar = isAdminPage || isSuperAdminPage || isAuthPage || isProfilePage;
 
     return (
         <>
