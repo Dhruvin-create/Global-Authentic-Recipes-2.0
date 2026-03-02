@@ -1,60 +1,32 @@
 'use client';
 
 import { Star, Clock, Users, Heart, ArrowRight, ChefHat } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthAction } from '@/lib/use-auth-action';
 import AuthModal from './AuthModal';
-
-const recipes = [
-    {
-        id: 1,
-        title: 'Authentic Butter Chicken',
-        cuisine: 'Indian',
-        time: '45 mins',
-        servings: 4,
-        rating: 4.9,
-        image: 'https://images.unsplash.com/photo-1603894584202-74092b60450b?w=600&q=80',
-        author: 'Chef Dhruvin',
-        level: 'Medium'
-    },
-    {
-        id: 2,
-        title: 'Spaghetti Carbonara',
-        cuisine: 'Italian',
-        time: '20 mins',
-        servings: 2,
-        rating: 4.8,
-        image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&q=80',
-        author: 'Chef Maria',
-        level: 'Easy'
-    },
-    {
-        id: 3,
-        title: 'Sushi Dragon Roll',
-        cuisine: 'Japanese',
-        time: '60 mins',
-        servings: 3,
-        rating: 4.9,
-        image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&q=80',
-        author: 'Chef Sato',
-        level: 'Hard'
-    },
-    {
-        id: 4,
-        title: 'Beef Tacos Al Pastor',
-        cuisine: 'Mexican',
-        time: '35 mins',
-        servings: 6,
-        rating: 4.7,
-        image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&q=80',
-        author: 'Chef Ricardo',
-        level: 'Medium'
-    }
-];
+import Link from 'next/link';
 
 export default function FeaturedRecipes() {
     const { requireAuth, showAuthModal, handleAuthSuccess, handleAuthClose } = useAuthAction();
     const [favorites, setFavorites] = useState([]);
+    const [recipes, setRecipes] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Fetch featured recipes from database
+    useEffect(() => {
+        fetch('/api/recipes?featured=true&limit=4')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.data)) {
+                    setRecipes(data.data);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Failed to load recipes:', err);
+                setLoading(false);
+            });
+    }, []);
 
     const handleFavorite = requireAuth((recipeId) => {
         // Toggle favorite
@@ -64,6 +36,54 @@ export default function FeaturedRecipes() {
             setFavorites([...favorites, recipeId]);
         }
     });
+
+    const getDifficultyColor = (difficulty) => {
+        switch(difficulty?.toUpperCase()) {
+            case 'EASY': return 'bg-green-500';
+            case 'MEDIUM': return 'bg-orange-500';
+            case 'HARD': return 'bg-red-500';
+            default: return 'bg-slate-500';
+        }
+    };
+
+    if (loading) {
+        return (
+            <section className="py-32 bg-white dark:bg-slate-950">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-20">
+                        <h2 className="text-5xl md:text-6xl font-display font-black text-slate-900 dark:text-white">
+                            Loading Recipes...
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="aspect-[4/5] rounded-[3rem] bg-slate-200 dark:bg-slate-800 mb-6"></div>
+                                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded mb-2"></div>
+                                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    if (recipes.length === 0) {
+        return (
+            <section className="py-32 bg-white dark:bg-slate-950">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <ChefHat className="w-20 h-20 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                        No Featured Recipes Yet
+                    </h2>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        Check back soon for amazing recipes!
+                    </p>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <>
@@ -93,7 +113,7 @@ export default function FeaturedRecipes() {
                             >
                                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-6 shadow-xl group-hover:shadow-2xl transition-all duration-700">
                                     <img
-                                        src={recipe.image}
+                                        src={recipe.image || '/placeholder-recipe.jpg'}
                                         alt={recipe.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 will-change-transform"
                                         loading="lazy"
@@ -116,10 +136,10 @@ export default function FeaturedRecipes() {
                                     <div className="absolute bottom-8 left-8 right-8">
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             <span className="px-3 py-1 rounded-xl bg-primary-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary-500/20">
-                                                {recipe.cuisine}
+                                                {recipe.cuisine_name || recipe.cuisine}
                                             </span>
-                                            <span className="px-3 py-1 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
-                                                {recipe.level}
+                                            <span className={`px-3 py-1 rounded-xl ${getDifficultyColor(recipe.difficulty)} text-white text-[10px] font-black uppercase tracking-widest`}>
+                                                {recipe.difficulty}
                                             </span>
                                         </div>
                                         <h3 className="text-2xl font-display font-black text-white leading-tight group-hover:text-primary-400 transition-colors duration-300">
@@ -133,33 +153,43 @@ export default function FeaturedRecipes() {
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                                                 <Clock className="w-4 h-4 text-primary-500" />
-                                                <span className="text-sm font-bold">{recipe.time}</span>
+                                                <span className="text-sm font-bold">{(recipe.prep_time || 0) + (recipe.cook_time || 0)} min</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                                                 <Users className="w-4 h-4 text-primary-500" />
                                                 <span className="text-sm font-bold">{recipe.servings}p</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                                            <span className="text-sm font-black text-slate-900 dark:text-white">{recipe.rating}</span>
-                                        </div>
+                                        {recipe.avg_rating && parseFloat(recipe.avg_rating) > 0 && (
+                                            <div className="flex items-center gap-1.5">
+                                                <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
+                                                <span className="text-sm font-black text-slate-900 dark:text-white">
+                                                    {parseFloat(recipe.avg_rating).toFixed(1)}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <button className="w-full py-4 text-slate-900 dark:text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group/btn border border-slate-200 dark:border-white/10 rounded-2xl hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-slate-900 transition-all duration-300">
+                                    <Link 
+                                        href={`/recipes/${recipe.slug}`}
+                                        className="w-full py-4 text-slate-900 dark:text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group/btn border border-slate-200 dark:border-white/10 rounded-2xl hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-slate-900 transition-all duration-300"
+                                    >
                                         See Recipe
                                         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1.5 transition-transform" />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     <div className="mt-24 text-center">
-                        <button className="group btn-secondary inline-flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-slate-100 px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest shadow-2xl transition-all duration-300">
+                        <Link 
+                            href="/recipes"
+                            className="group btn-secondary inline-flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-slate-100 px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest shadow-2xl transition-all duration-300"
+                        >
                             Explore All Recipes
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
