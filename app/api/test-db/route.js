@@ -21,7 +21,7 @@ async function testDatabaseHandler(request) {
     }
     
     // Test basic query
-    const basicTest = await executeQuery('SELECT 1 as test, NOW() as current_time');
+    const basicTest = await executeQuery('SELECT 1 as test, NOW() as db_time');
     
     // Test recipes table
     let recipesTest = null;
