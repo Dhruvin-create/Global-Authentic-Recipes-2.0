@@ -1,0 +1,15 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm install && npm run build"
+
+[deploy]
+startCommand = "npm run start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[[deploy.healthcheckPath]]
+path = "/"
+
+[env]
+NODE_VERSION = "20.11.0"
+NODE_ENV = "production"
