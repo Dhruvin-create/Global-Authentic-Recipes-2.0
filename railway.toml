@@ -6,9 +6,8 @@ buildCommand = "npm install && npm run build"
 startCommand = "npm run start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-[[deploy.healthcheckPath]]
-path = "/"
+healthcheckPath = "/"
+healthcheckTimeout = 100
 
 [env]
 NODE_VERSION = "20.11.0"
