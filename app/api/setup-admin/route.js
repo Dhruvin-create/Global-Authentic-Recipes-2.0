@@ -8,11 +8,11 @@ import bcrypt from 'bcryptjs';
 async function setupAdminHandler(request) {
   try {
     // Check if admin already exists
-    const [existing] = await executeQuery(
+    const existing = await executeQuery(
       'SELECT id FROM users WHERE role = "SUPER_ADMIN" LIMIT 1'
     );
     
-    if (existing.length > 0) {
+    if (existing && existing.length > 0) {
       return successResponse({ 
         message: 'Admin user already exists',
         userId: existing[0].id 
