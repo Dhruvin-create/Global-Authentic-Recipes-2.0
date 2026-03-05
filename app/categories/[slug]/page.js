@@ -34,7 +34,7 @@ export default function CategoryPage() {
       setLoading(true);
       
       // Fetch cuisine info
-      const cuisineResponse = await fetch(`/api/cuisines/${slug}`);
+      const cuisineResponse = await fetch(`/api/cuisine?slug=${slug}`);
       const cuisineData = await cuisineResponse.json();
       
       if (cuisineData.success) {
