@@ -9,7 +9,7 @@ async function setupAdminHandler(request) {
   try {
     // Check if admin already exists
     const existing = await executeQuery(
-      'SELECT id FROM users WHERE role = "SUPER_ADMIN" LIMIT 1'
+      'SELECT id FROM users WHERE role = "ADMIN" LIMIT 1'
     );
     
     if (existing && existing.length > 0) {
@@ -25,17 +25,15 @@ async function setupAdminHandler(request) {
     
     await executeQuery(
       `INSERT INTO users (
-        id, username, first_name, last_name, email, password, 
-        role, is_verified, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+        id, email, name, password, role, auth_provider, is_verified, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
       [
         userId,
-        'admin',
-        'Admin',
-        'User',
         'admin@globalrecipes.com',
+        'Admin User',
         hashedPassword,
-        'SUPER_ADMIN',
+        'ADMIN',
+        'EMAIL',
         true
       ]
     );
@@ -44,10 +42,9 @@ async function setupAdminHandler(request) {
       message: 'Admin user created successfully',
       userId,
       credentials: {
-        username: 'admin',
         email: 'admin@globalrecipes.com',
         password: 'admin123',
-        role: 'SUPER_ADMIN'
+        role: 'ADMIN'
       }
     }, 'Admin user created', 201);
     
