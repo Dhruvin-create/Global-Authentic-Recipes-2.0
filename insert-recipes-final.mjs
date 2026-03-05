@@ -25,7 +25,7 @@ async function insertRecipes() {
 
     // Get author ID (or use NULL if no users exist)
     let authorId = null;
-    const [users] = await connection.execute('SELECT id FROM users WHERE role = "SUPER_ADMIN" LIMIT 1');
+    const [users] = await connection.execute('SELECT id FROM users WHERE role = "ADMIN" LIMIT 1');
     if (users.length > 0) {
       authorId = users[0].id;
       console.log(`✅ Using author ID: ${authorId}\n`);

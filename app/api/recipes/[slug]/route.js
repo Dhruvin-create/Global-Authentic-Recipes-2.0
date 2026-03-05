@@ -40,7 +40,6 @@ async function getRecipeHandler(request, { params }) {
         c.name as cuisine_name,
         c.slug as cuisine_slug,
         u.name as author_name,
-        u.username as author_username,
         rs.like_count,
         rs.favorite_count,
         rs.review_count,
