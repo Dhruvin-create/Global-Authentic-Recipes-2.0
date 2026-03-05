@@ -1,10 +1,10 @@
 import mysql from 'mysql2/promise';
 
 const dbConfig = {
-  host: 'hopper.proxy.rlwy.net',
-  port: 15180,
+  host: 'switchback.proxy.rlwy.net',
+  port: 20721,
   user: 'root',
-  password: 'OvGwGlQBQtQKQRmzAfRElxjVkACpPvGv',
+  password: 'wBYdYMSqohVekErTKnqknEFScPkhkrEc',
   database: 'railway'
 };
 
@@ -23,9 +23,15 @@ async function insertRecipes() {
       cuisineMap[c.name.toLowerCase()] = c.id;
     });
 
-    // Get author ID
+    // Get author ID (or use NULL if no users exist)
+    let authorId = null;
     const [users] = await connection.execute('SELECT id FROM users WHERE role = "SUPER_ADMIN" LIMIT 1');
-    const authorId = users.length > 0 ? users[0].id : '9f717676-0c20-11f1-975a-ea47a259d521';
+    if (users.length > 0) {
+      authorId = users[0].id;
+      console.log(`✅ Using author ID: ${authorId}\n`);
+    } else {
+      console.log('⚠️  No users found, recipes will have NULL author_id\n');
+    }
 
     const recipes = [
       {
@@ -155,13 +161,13 @@ async function insertRecipes() {
       try {
         await connection.execute(
           `INSERT INTO recipes (
-            id, title, slug, description, image, category, cuisine_id, cuisine,
+            id, title, slug, description, image, category, cuisine_id,
             difficulty, prep_time, cook_time, servings, calories,
             is_published, is_featured, author_id
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             recipe.id, recipe.title, recipe.slug, recipe.description, recipe.image,
-            recipe.category, recipe.cuisine_id, recipe.cuisine_name, recipe.difficulty, recipe.prep_time,
+            recipe.category, recipe.cuisine_id, recipe.difficulty, recipe.prep_time,
             recipe.cook_time, recipe.servings, recipe.calories, true, true, authorId
           ]
         );

@@ -5,8 +5,12 @@
 -- ============================================
 
 -- Create Database
-CREATE DATABASE IF NOT EXISTS global_recipes CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE global_recipes;
+
+-- Use railway database
+USE railway;
+
+-- Check if we're in the right database
+SELECT DATABASE();
 
 -- ============================================
 -- USER AUTHENTICATION & MANAGEMENT
