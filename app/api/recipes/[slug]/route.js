@@ -48,7 +48,7 @@ async function getRecipeHandler(request, { params }) {
       LEFT JOIN cuisines c ON r.cuisine_id = c.id
       LEFT JOIN users u ON r.author_id = u.id
       LEFT JOIN recipe_stats rs ON r.id = rs.id
-      WHERE r.slug = ? AND r.is_published = TRUE
+      WHERE r.slug = ? AND r.is_published = 1
     `;
     
     const recipes = await executeQuery(recipeQuery, [slug]);
