@@ -28,7 +28,7 @@ export default function RecipePage() {
   const fetchRecipe = async (slug) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/recipe?slug=${slug}`);
+      const response = await fetch(`/api/recipes/${slug}`);
       const data = await response.json();
       
       if (data.success) {
