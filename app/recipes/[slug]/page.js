@@ -77,12 +77,18 @@ export default function RecipePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse">
-            <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded mb-4 w-1/4"></div>
-            <div className="h-12 bg-slate-200 dark:bg-slate-800 rounded mb-6 w-3/4"></div>
-            <div className="aspect-video bg-slate-200 dark:bg-slate-800 rounded-3xl mb-8"></div>
+            <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded mb-6 w-32"></div>
+            <div className="h-16 bg-slate-200 dark:bg-slate-800 rounded mb-4 w-3/4"></div>
+            <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded mb-8 w-full"></div>
+            <div className="aspect-video bg-slate-200 dark:bg-slate-800 rounded-3xl mb-12"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-32 bg-slate-200 dark:bg-slate-800 rounded-3xl"></div>
+              ))}
+            </div>
             <div className="space-y-4">
               <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
               <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
@@ -96,18 +102,18 @@ export default function RecipePage() {
 
   if (error || !recipe) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <ChefHat className="w-20 h-20 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center pt-20">
+        <div className="text-center px-4">
+          <ChefHat className="w-24 h-24 mx-auto text-slate-300 dark:text-slate-700 mb-6" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
             Recipe Not Found
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
             {error || 'The recipe you\'re looking for doesn\'t exist.'}
           </p>
           <Link 
             href="/recipes"
-            className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-primary-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Recipes
@@ -119,10 +125,10 @@ export default function RecipePage() {
 
   return (
     <>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20">
         {/* Header */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Link 
               href="/recipes"
               className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-4"
@@ -131,48 +137,48 @@ export default function RecipePage() {
               Back to Recipes
             </Link>
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-bold">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-bold">
                     {recipe.cuisine_name}
                   </span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${getDifficultyColor(recipe.difficulty)}`}>
+                  <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${getDifficultyColor(recipe.difficulty)}`}>
                     {recipe.difficulty}
                   </span>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-display font-black text-slate-900 dark:text-white">
+                <h1 className="text-3xl md:text-5xl font-display font-black text-slate-900 dark:text-white mb-3 leading-tight">
                   {recipe.title}
                 </h1>
-                <p className="text-slate-600 dark:text-slate-400 mt-2">
+                <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                   {recipe.description}
                 </p>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex md:flex-col items-center gap-3 md:ml-6">
                 <button
                   onClick={handleFavorite}
-                  className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all ${
+                  className={`w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all hover:scale-110 ${
                     isFavorite
-                      ? 'bg-red-500 border-red-500 text-white'
-                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-red-500 hover:text-red-500'
+                      ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/30'
+                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-red-500 hover:text-red-500 bg-white dark:bg-slate-800'
                   }`}
                 >
                   <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
                 </button>
                 <button
                   onClick={handleLike}
-                  className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all ${
+                  className={`w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all hover:scale-110 ${
                     isLiked
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-500 hover:text-blue-500'
+                      ? 'bg-blue-500 border-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-500 hover:text-blue-500 bg-white dark:bg-slate-800'
                   }`}
                 >
                   <ThumbsUp className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
                 </button>
                 <button
                   onClick={handleShare}
-                  className="w-12 h-12 rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-500 hover:text-primary-500 flex items-center justify-center transition-all"
+                  className="w-14 h-14 rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-500 hover:text-primary-500 bg-white dark:bg-slate-800 flex items-center justify-center transition-all hover:scale-110"
                 >
                   <Share2 className="w-6 h-6" />
                 </button>
@@ -181,65 +187,66 @@ export default function RecipePage() {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Recipe Image */}
-          <div className="aspect-video rounded-3xl overflow-hidden mb-12 shadow-xl">
+          <div className="aspect-video rounded-3xl overflow-hidden mb-12 shadow-2xl ring-1 ring-slate-200 dark:ring-slate-800">
             <img
               src={recipe.image || '/placeholder-recipe.jpg'}
               alt={recipe.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
             />
           </div>
 
           {/* Recipe Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl">
-              <Clock className="w-8 h-8 mx-auto text-primary-500 mb-2" />
-              <div className="text-2xl font-black text-slate-900 dark:text-white">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
+              <Clock className="w-8 h-8 mx-auto text-primary-500 mb-3" />
+              <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
                 {(recipe.prep_time || 0) + (recipe.cook_time || 0)}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Minutes</div>
+              <div className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Minutes</div>
             </div>
-            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl">
-              <Users className="w-8 h-8 mx-auto text-primary-500 mb-2" />
-              <div className="text-2xl font-black text-slate-900 dark:text-white">
+            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
+              <Users className="w-8 h-8 mx-auto text-primary-500 mb-3" />
+              <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
                 {recipe.servings}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Servings</div>
+              <div className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Servings</div>
             </div>
-            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl">
-              <Flame className="w-8 h-8 mx-auto text-primary-500 mb-2" />
-              <div className="text-2xl font-black text-slate-900 dark:text-white">
+            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
+              <Flame className="w-8 h-8 mx-auto text-primary-500 mb-3" />
+              <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
                 {recipe.calories || 'N/A'}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Calories</div>
+              <div className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Calories</div>
             </div>
-            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl">
-              <Star className="w-8 h-8 mx-auto text-primary-500 mb-2" />
-              <div className="text-2xl font-black text-slate-900 dark:text-white">
+            <div className="text-center p-6 bg-white dark:bg-slate-900 rounded-3xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-800">
+              <Star className="w-8 h-8 mx-auto text-primary-500 mb-3" />
+              <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
                 {recipe.avg_rating ? parseFloat(recipe.avg_rating).toFixed(1) : 'N/A'}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Rating</div>
+              <div className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Rating</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Ingredients */}
             <div className="lg:col-span-1">
-              <h2 className="text-2xl font-display font-black text-slate-900 dark:text-white mb-6">
+              <h2 className="text-2xl md:text-3xl font-display font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                <div className="w-1 h-8 bg-primary-500 rounded-full"></div>
                 Ingredients
               </h2>
-              <div className="bg-white dark:bg-slate-900 rounded-3xl p-8">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 dark:border-slate-800 sticky top-24">
                 {recipe.ingredients && recipe.ingredients.length > 0 ? (
                   <ul className="space-y-4">
                     {recipe.ingredients.map((ingredient, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
-                        <div>
-                          <span className="font-bold text-slate-900 dark:text-white">
+                      <li key={index} className="flex items-start gap-3 group">
+                        <div className="w-2 h-2 rounded-full bg-primary-500 mt-2.5 flex-shrink-0 group-hover:scale-150 transition-transform"></div>
+                        <div className="flex-1">
+                          <span className="font-bold text-slate-900 dark:text-white block">
                             {ingredient.quantity}
                           </span>
-                          <span className="text-slate-600 dark:text-slate-400 ml-2">
+                          <span className="text-slate-600 dark:text-slate-400 text-sm">
                             {ingredient.name}
                           </span>
                         </div>
@@ -256,26 +263,27 @@ export default function RecipePage() {
 
             {/* Instructions */}
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-display font-black text-slate-900 dark:text-white mb-6">
+              <h2 className="text-2xl md:text-3xl font-display font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                <div className="w-1 h-8 bg-primary-500 rounded-full"></div>
                 Instructions
               </h2>
               <div className="space-y-6">
                 {recipe.instructions && recipe.instructions.length > 0 ? (
                   recipe.instructions.map((instruction, index) => (
-                    <div key={index} className="bg-white dark:bg-slate-900 rounded-3xl p-8">
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-2xl bg-primary-500 text-white font-black flex items-center justify-center flex-shrink-0">
+                    <div key={index} className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-md transition-all border border-slate-100 dark:border-slate-800 group">
+                      <div className="flex items-start gap-4 md:gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white font-black text-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
                           {index + 1}
                         </div>
                         <div className="flex-1">
-                          <p className="text-slate-900 dark:text-white leading-relaxed">
+                          <p className="text-slate-900 dark:text-white leading-relaxed text-base md:text-lg">
                             {instruction.description}
                           </p>
                           {instruction.image && (
                             <img
                               src={instruction.image}
                               alt={`Step ${index + 1}`}
-                              className="mt-4 rounded-2xl w-full max-w-md"
+                              className="mt-4 rounded-2xl w-full max-w-md shadow-md"
                             />
                           )}
                         </div>
@@ -283,7 +291,7 @@ export default function RecipePage() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-white dark:bg-slate-900 rounded-3xl p-8">
+                  <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-800">
                     <p className="text-slate-600 dark:text-slate-400">
                       Instructions will be loaded soon...
                     </p>
@@ -294,22 +302,22 @@ export default function RecipePage() {
           </div>
 
           {/* Recipe Meta */}
-          <div className="mt-12 p-8 bg-white dark:bg-slate-900 rounded-3xl">
+          <div className="mt-12 p-8 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div>
-                <Eye className="w-6 h-6 mx-auto text-slate-400 mb-2" />
+              <div className="group">
+                <Eye className="w-6 h-6 mx-auto text-slate-400 group-hover:text-primary-500 mb-2 transition-colors" />
                 <div className="text-sm text-slate-600 dark:text-slate-400">
                   {recipe.view_count || 0} views
                 </div>
               </div>
-              <div>
-                <Calendar className="w-6 h-6 mx-auto text-slate-400 mb-2" />
+              <div className="group">
+                <Calendar className="w-6 h-6 mx-auto text-slate-400 group-hover:text-primary-500 mb-2 transition-colors" />
                 <div className="text-sm text-slate-600 dark:text-slate-400">
                   Added {new Date(recipe.created_at).toLocaleDateString()}
                 </div>
               </div>
-              <div>
-                <ChefHat className="w-6 h-6 mx-auto text-slate-400 mb-2" />
+              <div className="group">
+                <ChefHat className="w-6 h-6 mx-auto text-slate-400 group-hover:text-primary-500 mb-2 transition-colors" />
                 <div className="text-sm text-slate-600 dark:text-slate-400">
                   By {recipe.author_name || 'Chef'}
                 </div>
