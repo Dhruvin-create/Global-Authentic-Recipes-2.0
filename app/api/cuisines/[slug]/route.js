@@ -9,9 +9,10 @@ import {
 } from '@/lib/api-response';
 import { executeQuery } from '@/lib/database';
 
-async function getCuisineHandler(request, { params }) {
+async function getCuisineHandler(request, context) {
   validateMethod(request, ['GET']);
   
+  const params = await context.params;
   const { slug } = params;
   
   if (!slug) {
