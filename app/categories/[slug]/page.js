@@ -120,22 +120,22 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-24">
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-gradient-to-br from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link 
             href="/categories"
-            className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 mb-6 px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-primary-50 hover:to-orange-50 dark:hover:from-primary-900/20 dark:hover:to-orange-900/20 hover:scale-105 hover:shadow-md"
           >
             <ArrowLeft className="w-5 h-5" />
-            Back to Categories
+            <span className="font-bold">Back to Categories</span>
           </Link>
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-6">
               {cuisine.image && (
-                <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
+                <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 ring-4 ring-primary-500/20 shadow-2xl hover:scale-110 hover:rotate-3 transition-all duration-500">
                   <img
                     src={cuisine.image}
                     alt={cuisine.name}
@@ -146,37 +146,37 @@ export default function CategoryPage() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Globe className="w-5 h-5 text-primary-500" />
-                  <span className="text-primary-600 dark:text-primary-400 font-bold">
+                  <span className="text-primary-600 dark:text-primary-400 font-bold bg-gradient-to-r from-primary-50 to-orange-50 dark:from-primary-900/20 dark:to-orange-900/20 px-3 py-1 rounded-full">
                     World Cuisine
                   </span>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-display font-black text-slate-900 dark:text-white">
+                <h1 className="text-4xl md:text-5xl font-display font-black bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
                   {cuisine.name}
                 </h1>
                 {cuisine.description && (
-                  <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl">
+                  <p className="text-slate-600 dark:text-slate-400 mt-3 max-w-2xl text-lg">
                     {cuisine.description}
                   </p>
                 )}
               </div>
             </div>
             
-            <div className="flex items-center gap-6 text-center">
-              <div>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">
+            <div className="flex items-center gap-8 text-center">
+              <div className="bg-gradient-to-br from-primary-50 to-orange-50 dark:from-primary-900/20 dark:to-orange-900/20 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300">
+                <div className="text-3xl font-black bg-gradient-to-r from-primary-600 to-orange-600 bg-clip-text text-transparent">
                   {cuisine.recipe_count || recipes.length}
                 </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Recipes</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-bold">Recipes</div>
               </div>
               {cuisine.avg_rating && parseFloat(cuisine.avg_rating) > 0 && (
-                <div>
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300">
                   <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
-                    <Star className="w-5 h-5 fill-current" />
-                    <span className="text-2xl font-black text-slate-900 dark:text-white">
+                    <Star className="w-6 h-6 fill-current" />
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">
                       {parseFloat(cuisine.avg_rating).toFixed(1)}
                     </span>
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Rating</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400 font-bold">Rating</div>
                 </div>
               )}
             </div>
@@ -186,17 +186,17 @@ export default function CategoryPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filters */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-8 shadow-sm">
+        <div className="bg-gradient-to-br from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-6 mb-8 shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50 backdrop-blur-xl hover:shadow-3xl transition-all duration-300">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 group-focus-within:scale-110 transition-all duration-300" />
               <input
                 type="text"
                 placeholder="Search recipes..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
-                className="w-full pl-12 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-12 pr-4 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:shadow-lg focus:shadow-primary-500/20 transition-all duration-300 hover:shadow-md"
               />
             </div>
 
@@ -204,7 +204,7 @@ export default function CategoryPage() {
             <select
               value={filters.category}
               onChange={(e) => setFilters({ ...filters, category: e.target.value, page: 1 })}
-              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-4 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:shadow-lg focus:shadow-primary-500/20 transition-all duration-300 hover:shadow-md font-bold"
             >
               <option value="">All Categories</option>
               {categories.map(cat => (
@@ -216,7 +216,7 @@ export default function CategoryPage() {
             <select
               value={filters.difficulty}
               onChange={(e) => setFilters({ ...filters, difficulty: e.target.value, page: 1 })}
-              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-4 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:shadow-lg focus:shadow-primary-500/20 transition-all duration-300 hover:shadow-md font-bold"
             >
               <option value="">All Levels</option>
               {difficulties.map(diff => (
@@ -228,19 +228,19 @@ export default function CategoryPage() {
 
         {/* Results Count */}
         {pagination && (
-          <div className="mb-6 text-slate-600 dark:text-slate-400">
-            Showing {recipes.length} of {pagination.total} {cuisine.name} recipes
+          <div className="mb-6 text-slate-600 dark:text-slate-400 font-bold text-lg">
+            Showing <span className="text-primary-600 dark:text-primary-400">{recipes.length}</span> of <span className="text-primary-600 dark:text-primary-400">{pagination.total}</span> {cuisine.name} recipes
           </div>
         )}
 
         {/* Recipes Grid */}
         {recipes.length === 0 ? (
           <div className="text-center py-20">
-            <ChefHat className="w-20 h-20 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            <ChefHat className="w-24 h-24 mx-auto text-slate-300 dark:text-slate-700 mb-6 animate-bounce" />
+            <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
               No {cuisine.name} recipes found
             </h3>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-slate-600 dark:text-slate-400 text-lg">
               Try adjusting your filters or check back later
             </p>
           </div>
@@ -250,42 +250,42 @@ export default function CategoryPage() {
               <Link
                 key={recipe.id}
                 href={`/recipes/${recipe.slug}`}
-                className="group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+                className="group bg-gradient-to-br from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl overflow-hidden shadow-xl border-2 border-slate-200/50 dark:border-slate-700/50 hover:shadow-3xl hover:border-primary-500/50 hover:-translate-y-2 transition-all duration-500"
               >
                 <div className="relative h-64 overflow-hidden">
                   <img
                     src={recipe.image || '/placeholder-recipe.jpg'}
                     alt={recipe.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-125 group-hover:rotate-2 transition-all duration-700"
                   />
                   {recipe.is_featured && (
-                    <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg animate-pulse">
                       Featured
                     </div>
                   )}
-                  <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold">
+                  <div className="absolute bottom-4 left-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-4 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-white/50 dark:border-slate-700/50">
                     {recipe.difficulty}
                   </div>
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary-600 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary-600 transition-colors line-clamp-1">
                     {recipe.title}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 line-clamp-2">
                     {recipe.description}
                   </p>
 
-                  <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 px-3 py-1.5 rounded-full">
                       <Clock className="w-4 h-4" />
-                      <span>{(recipe.prep_time || 0) + (recipe.cook_time || 0)} min</span>
+                      <span className="font-bold">{(recipe.prep_time || 0) + (recipe.cook_time || 0)} min</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 px-3 py-1.5 rounded-full">
                       <Users className="w-4 h-4" />
-                      <span>{recipe.servings}</span>
+                      <span className="font-bold">{recipe.servings}</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <Flame className="w-4 h-4" />
                       <span className={`font-bold ${
                         recipe.difficulty === 'EASY' ? 'text-green-500' :
@@ -298,12 +298,12 @@ export default function CategoryPage() {
                   </div>
 
                   {recipe.avg_rating && parseFloat(recipe.avg_rating) > 0 && (
-                    <div className="mt-4 flex items-center gap-2">
+                    <div className="mt-4 flex items-center gap-2 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 px-3 py-2 rounded-xl">
                       <div className="flex text-orange-400">
                         {'★'.repeat(Math.round(parseFloat(recipe.avg_rating)))}
                         {'☆'.repeat(5 - Math.round(parseFloat(recipe.avg_rating)))}
                       </div>
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                      <span className="text-sm text-slate-600 dark:text-slate-400 font-bold">
                         ({recipe.review_count || 0} reviews)
                       </span>
                     </div>
@@ -316,11 +316,11 @@ export default function CategoryPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="mt-12 flex justify-center gap-2">
+          <div className="mt-12 flex justify-center gap-3">
             <button
               onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
               disabled={!pagination.hasPrev}
-              className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:from-primary-50 hover:to-orange-50 dark:hover:from-primary-900/20 dark:hover:to-orange-900/20 hover:border-primary-500 hover:scale-105 transition-all duration-300 font-bold shadow-lg hover:shadow-xl"
             >
               Previous
             </button>
@@ -329,10 +329,10 @@ export default function CategoryPage() {
                 <button
                   key={i}
                   onClick={() => setFilters({ ...filters, page: i + 1 })}
-                  className={`w-12 h-12 rounded-2xl font-bold transition-colors ${
+                  className={`w-12 h-12 rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 ${
                     filters.page === i + 1
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      ? 'bg-gradient-to-r from-primary-600 to-orange-600 text-white scale-110'
+                      : 'bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:from-primary-50 hover:to-orange-50 dark:hover:from-primary-900/20 dark:hover:to-orange-900/20 hover:border-primary-500'
                   }`}
                 >
                   {i + 1}
@@ -342,7 +342,7 @@ export default function CategoryPage() {
             <button
               onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
               disabled={!pagination.hasNext}
-              className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:from-primary-50 hover:to-orange-50 dark:hover:from-primary-900/20 dark:hover:to-orange-900/20 hover:border-primary-500 hover:scale-105 transition-all duration-300 font-bold shadow-lg hover:shadow-xl"
             >
               Next
             </button>
